@@ -4,12 +4,12 @@
 - [android-studio](README.md#android-studio)
 
 
-[/android-studio/Android-Studio-Gradle-Update](/android-studio/Android-Studio-Gradle-Update.md)
+[/ide/android-studio/Android-Studio-Gradle-Update](/ide/android-studio/Android-Studio-Gradle-Update.md)
 
-- [as_gradle_update_2_to_3.py](/android-studio/Android-Studio-Gradle-Update.md#as_gradle_update_2_to_3.py)
-    - [evn](/android-studio/Android-Studio-Gradle-Update.md#evn)
-    - [install](/android-studio/Android-Studio-Gradle-Update.md#install)
-    - [Use](/android-studio/Android-Studio-Gradle-Update.md#use)
+- [as_gradle_update_2_to_3.py](/ide/android-studio/Android-Studio-Gradle-Update.md#as_gradle_update_2_to_3.py)
+    - [evn](/ide/android-studio/Android-Studio-Gradle-Update.md#evn)
+    - [install](/ide/android-studio/Android-Studio-Gradle-Update.md#install)
+    - [Use](/ide/android-studio/Android-Studio-Gradle-Update.md#use)
 
 
 --------------
