@@ -25,6 +25,10 @@ Your input error
     or input [-h] to see help
 """
 
+runtime_version_error = """
+This script must run python 2.6.+
+"""
+
 
 class PLog:
     def __init__(self):
@@ -309,16 +313,27 @@ def update_as_project_2_to_3(update_path):
     PLog.log(update_msg, "i", True)
 
 
+def check_runtime():
+    version_split = platform.python_version().split('.')
+    if version_split[0] != '2':
+        PLog.log(runtime_version_error, 'e', True)
+        exit(1)
+    if version_split[1] < '6':
+        PLog.log(runtime_version_error, 'e', True)
+        exit(1)
+
+
 if __name__ == '__main__':
     folder_path = ''
     if len(sys.argv) < 2:
         PLog.log(enter_error_info, 'e', True)
         exit(1)
+    check_runtime()
     parser = optparse.OptionParser('\n%prog ' + ' -p \n\tOr %prog <folder>\n' + hint_help_info)
     parser.add_option('-v', dest='v_verbose', action="store_true", help="see verbose", default=False)
     parser.add_option('-f', '--folder', dest='f_folder', type="string", help="path of folder Default is .",
                       default=".", metavar=".")
-    parser.add_option('-l', '--level', dest='l_level', type="int", help="top level Default 7",
+    parser.add_option('-l', '--level', dest='l_level', type="int", help="top level Default 7 now no use",
                       default=7, metavar=7)
     (options, args) = parser.parse_args()
     if options.v_verbose:
