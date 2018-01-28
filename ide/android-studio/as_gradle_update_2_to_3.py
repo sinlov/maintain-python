@@ -314,6 +314,7 @@ def update_as_project_2_to_3(update_path):
 
 
 def check_runtime():
+    PLog.log('Python version %s' % platform.python_version(), 'd')
     version_split = platform.python_version().split('.')
     if version_split[0] != '2':
         PLog.log(runtime_version_error, 'e', True)
@@ -328,7 +329,6 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         PLog.log(enter_error_info, 'e', True)
         exit(1)
-    check_runtime()
     parser = optparse.OptionParser('\n%prog ' + ' -p \n\tOr %prog <folder>\n' + hint_help_info)
     parser.add_option('-v', dest='v_verbose', action="store_true", help="see verbose", default=False)
     parser.add_option('-f', '--folder', dest='f_folder', type="string", help="path of folder Default is .",
@@ -340,6 +340,7 @@ if __name__ == '__main__':
         is_verbose = True
     if options.l_level is not None:
         level_set = options.l_level
+    check_runtime()
     if options.f_folder is not None:
         folder_path = options.f_folder
         if folder_path == '.':
