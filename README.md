@@ -4,6 +4,9 @@ for maintain
 
 - need python 2.6.+
 
+# ide
+
+See [ide/README.md]
 
 #License
 
