@@ -6,7 +6,7 @@ for maintain
 
 # ide
 
-See [ide/README.md]
+See [ide/README.md](ide/README.md)
 
 #License
 
