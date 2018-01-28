@@ -12,6 +12,12 @@
 curl -s -O "https://raw.githubusercontent.com/sinlov/maintain-python/master/ide/android-studio/as_gradle_update_2_to_3.py"
 ```
 
+- linux
+
+```sh
+wget "https://raw.githubusercontent.com/sinlov/maintain-python/master/ide/android-studio/as_gradle_update_2_to_3.py"
+```
+
 let download script to your `$PATH` and let can execution
 
 ```sh
