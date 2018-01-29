@@ -9,7 +9,7 @@
 - macOS
 
 ```sh
-curl -s -O -N "https://raw.githubusercontent.com/sinlov/maintain-python/master/ide/android-studio/as_gradle_update_2_to_3.py"
+curl -s -O --no-buffer "https://raw.githubusercontent.com/sinlov/maintain-python/master/ide/android-studio/as_gradle_update_2_to_3.py"
 ```
 
 - linux

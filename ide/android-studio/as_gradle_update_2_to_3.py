@@ -121,9 +121,8 @@ def text_replace(t_file, old_str=str, new_str=str):
                 lines[i] = lines[i].replace(old_str, new_str)
         open(t_file, 'w').writelines(lines)
         PLog.log('replace_text success Path: %s | from => %s To => %s' % (t_file, old_str, new_str), '')
-    except Exception, e:
+    except Exception as e:
         PLog.log('replace_text error %s' % str(e), 'e', True)
-        print e
 
 
 def text_replace_full_line(t_file, line_num=[], new_str=str):
@@ -143,9 +142,8 @@ def text_replace_full_line(t_file, line_num=[], new_str=str):
                     lines[i] = new_str
         open(t_file, 'w').writelines(lines)
         PLog.log('replace_text success Path: %s | line => %s as => %s' % (t_file, line_num, new_str), '')
-    except Exception, e:
+    except Exception as e:
         PLog.log('replace_text error %s' % str(e), 'e', True)
-        print e
 
 
 def text_line_find(t_file=str, t_string=str):
@@ -160,7 +158,7 @@ def text_line_find(t_file=str, t_string=str):
                 if t_string in f_lines[line_num]:
                     res.append(line_num)
             return res
-        except Exception, e:
+        except Exception as e:
             PLog.log('text_line_find error %s' % str(e), 'e', True)
             pass
 
@@ -189,7 +187,7 @@ def text_insert_line(t_file=str, line_no_s=[], insert_string=str):
         o_file = file(t_file, 'w')
         o_file.write(out_line_list)
         o_file.close()
-    except Exception, e:
+    except Exception as e:
         PLog.log('text_insert error %s' % str(e), 'e', True)
 
 
@@ -226,7 +224,7 @@ def find_out_settings_gradle_module_name(update_path):
                         if find.startswith(":"):
                             module_name = find.replace(':', '')
                             dev_modules.append(module_name)
-        except Exception, e:
+        except Exception as e:
             PLog.log("check_settings_gradle error, error info %s" % str(e), 'e', True)
             dev_modules = []
         return dev_modules
@@ -327,6 +325,7 @@ def update_as_project_2_to_3(update_path):
 
 
 if __name__ == '__main__':
+    PLog.check_runtime()
     folder_path = ''
     if len(sys.argv) < 2:
         PLog.log(enter_error_info, 'e', True)
@@ -340,7 +339,6 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     if options.v_verbose:
         is_verbose = True
-    PLog.check_runtime()
     if options.l_level is not None:
         level_set = options.l_level
     if options.f_folder is not None:
