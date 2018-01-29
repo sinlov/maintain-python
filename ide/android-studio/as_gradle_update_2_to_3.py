@@ -98,7 +98,7 @@ class PLog:
                 else:
                     PLog.log_normal('%s' % msg)
             else:
-                print '%s\n' % msg
+                print ('%s\n' % msg)
 
 
 def is_platform_windows():
