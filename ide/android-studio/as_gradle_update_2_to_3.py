@@ -31,7 +31,9 @@ This script must run python 2.6.+
 
 
 class PLog:
+
     def __init__(self):
+        PLog.check_runtime()
         pass
 
     ERROR = '\033[91m'
@@ -44,28 +46,39 @@ class PLog:
     END_LI = '\033[0m'
 
     @staticmethod
+    def check_runtime():
+        PLog.log('Python version %s' % platform.python_version(), 'd')
+        version_split = platform.python_version().split('.')
+        if version_split[0] != '2':
+            PLog.log(runtime_version_error, 'e', True)
+            exit(1)
+        if version_split[1] < '6':
+            PLog.log(runtime_version_error, 'e', True)
+            exit(1)
+
+    @staticmethod
     def log_normal(info):
-        print PLog.WRITE + info + PLog.END_LI
+        print (PLog.WRITE + info + PLog.END_LI)
 
     @staticmethod
     def log_assert(info):
-        print PLog.BLACK + info + PLog.END_LI
+        print (PLog.BLACK + info + PLog.END_LI)
 
     @staticmethod
     def log_info(info):
-        print PLog.OK_GREEN + info + PLog.END_LI
+        print (PLog.OK_GREEN + info + PLog.END_LI)
 
     @staticmethod
     def log_debug(info):
-        print PLog.OK_BLUE + info + PLog.END_LI
+        print (PLog.OK_BLUE + info + PLog.END_LI)
 
     @staticmethod
     def log_warning(info):
-        print PLog.WARNING + info + PLog.END_LI
+        print (PLog.WARNING + info + PLog.END_LI)
 
     @staticmethod
     def log_error(info):
-        print PLog.ERROR + info + PLog.END_LI
+        print (PLog.ERROR + info + PLog.END_LI)
 
     @staticmethod
     def log(msg, lev=str, must=False):
@@ -314,17 +327,6 @@ def update_as_project_2_to_3(update_path):
     PLog.log(update_msg, "i", True)
 
 
-def check_runtime():
-    PLog.log('Python version %s' % platform.python_version(), 'd')
-    version_split = platform.python_version().split('.')
-    if version_split[0] != '2':
-        PLog.log(runtime_version_error, 'e', True)
-        exit(1)
-    if version_split[1] < '6':
-        PLog.log(runtime_version_error, 'e', True)
-        exit(1)
-
-
 if __name__ == '__main__':
     folder_path = ''
     if len(sys.argv) < 2:
@@ -341,7 +343,6 @@ if __name__ == '__main__':
         is_verbose = True
     if options.l_level is not None:
         level_set = options.l_level
-    check_runtime()
     if options.f_folder is not None:
         folder_path = options.f_folder
         if folder_path == '.':
