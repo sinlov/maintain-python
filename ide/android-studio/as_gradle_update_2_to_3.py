@@ -33,7 +33,6 @@ This script must run python 2.6.+
 class PLog:
 
     def __init__(self):
-        PLog.check_runtime()
         pass
 
     ERROR = '\033[91m'
@@ -341,6 +340,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     if options.v_verbose:
         is_verbose = True
+    PLog.check_runtime()
     if options.l_level is not None:
         level_set = options.l_level
     if options.f_folder is not None:
