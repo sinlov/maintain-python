@@ -36,6 +36,67 @@ out_of_time_log_auto_clean = 60 * 60 * 24 * 7
 gradle_snapshot_mark = '-SNAPSHOT'
 gradle_file_2_1_path = os.path.join(os.path.expandvars('$HOME'), '.gradle', 'caches', 'modules-2', 'files-2.1')
 
+runtime_version_error = """
+This script must run python 2.6.+
+"""
+
+class PLog:
+    def __init__(self):
+        pass
+
+    ERROR = '\033[91m'
+    OK_GREEN = '\033[96m'
+    WARNING = '\033[93m'
+    OK_BLUE = '\033[94m'
+    HEADER = '\033[95m'
+    WRITE = '\033[98m'
+    BLACK = '\033[97m'
+    END_LI = '\033[0m'
+
+    @staticmethod
+    def log_normal(info):
+        print PLog.WRITE + info + PLog.END_LI
+
+    @staticmethod
+    def log_assert(info):
+        print PLog.BLACK + info + PLog.END_LI
+
+    @staticmethod
+    def log_info(info):
+        print PLog.OK_GREEN + info + PLog.END_LI
+
+    @staticmethod
+    def log_debug(info):
+        print PLog.OK_BLUE + info + PLog.END_LI
+
+    @staticmethod
+    def log_warning(info):
+        print PLog.WARNING + info + PLog.END_LI
+
+    @staticmethod
+    def log_error(info):
+        print PLog.ERROR + info + PLog.END_LI
+
+    @staticmethod
+    def log(msg, lev=str, must=False):
+        # type: (str, str, bool) -> None
+        if is_verbose or must:
+            if not platform.system() == "Windows":
+                if lev == 'i':
+                    PLog.log_info('%s' % msg)
+                elif lev == 'd':
+                    PLog.log_debug('%s' % msg)
+                elif lev == 'w':
+                    PLog.log_warning('%s' % msg)
+                elif lev == 'e':
+                    PLog.log_error('%s' % msg)
+                elif lev == 'a':
+                    PLog.log_assert('%s' % msg)
+                else:
+                    PLog.log_normal('%s' % msg)
+            else:
+                print '%s\n' % msg
+
 
 def init_logger(first_tag, sec_tag=str):
     global logger
@@ -198,6 +259,17 @@ def clean_old_gradle_catch_snapshot():
     pass
 
 
+def check_runtime():
+    PLog.log('Python version %s' % platform.python_version(), 'd')
+    version_split = platform.python_version().split('.')
+    if version_split[0] != '2':
+        PLog.log(runtime_version_error, 'e', True)
+        exit(1)
+    if version_split[1] < '6':
+        PLog.log(runtime_version_error, 'e', True)
+        exit(1)
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print "You must input params or see -h"
@@ -219,6 +291,7 @@ if __name__ == '__main__':
     logger = init_logger_by_time(this_tag)
     if options.v_verbose:
         is_verbose = True
+    check_runtime()
     if options.u_uselessClean:
         try:
             clean_useless_gradle_catch_snapshot()
@@ -226,4 +299,3 @@ if __name__ == '__main__':
             log_printer('just some error, please check %s' % str(e))
     if options.c_cleanOld:
         clean_old_gradle_catch_snapshot()
-
