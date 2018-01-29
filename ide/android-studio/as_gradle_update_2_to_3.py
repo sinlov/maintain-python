@@ -240,6 +240,7 @@ def update_module_build_gradle(module_root_path):
         text_replace(module_gradle_path, r'testCompile', r'testImplementation')
         text_replace(module_gradle_path, r'androidTestCompile', r'androidTestImplementation')
         text_replace(module_gradle_path, r'compile ', r'implementation ')
+        text_replace(module_gradle_path, r'apt ', r'annotationProcessor ')
         product_flavors = text_line_find(module_gradle_path, r'productFlavors {')
         if len(product_flavors) > 0:
             flavor_dimensions = text_line_find(module_gradle_path, r'flavorDimensions "versionCode"')
