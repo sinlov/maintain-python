@@ -141,7 +141,7 @@ def text_remove_full_line(t_file, line_nums=[]):
             if line_num <= file_len:
                 file_lines.remove(file_lines[line_num])
         open(t_file, 'w').writelines(file_lines)
-        PLog.log('text_remove_full_line success Path: %s | line => %s as => %s' % (t_file, line_nums, new_str), '')
+        PLog.log('text_remove_full_line success Path: %s | line => %s' % (t_file, line_nums), '')
     except Exception as e:
         PLog.log('text_remove_full_line error %s' % str(e), 'e', True)
 
