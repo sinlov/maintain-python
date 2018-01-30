@@ -125,6 +125,27 @@ def text_replace(t_file, old_str=str, new_str=str):
         PLog.log('replace_text error %s' % str(e), 'e', True)
 
 
+def text_remove_full_line(t_file, line_nums=[]):
+    # type: (str, list) -> None
+    if not os.path.exists(t_file):
+        PLog.log('text_remove_full_line error file not exists => %s' % t_file, 'e', True)
+        return
+    if len(line_nums) == 0:
+        PLog.log('text_remove_full_line line_num len is 0 => %s' % line_nums, '')
+        return
+    try:
+        line_nums = list(set(line_nums))
+        file_lines = open(t_file, 'r').readlines()
+        file_len = len(file_lines)
+        for line_num in line_nums:
+            if line_num <= file_len:
+                file_lines.remove(file_lines[line_num])
+        open(t_file, 'w').writelines(file_lines)
+        PLog.log('text_remove_full_line success Path: %s | line => %s as => %s' % (t_file, line_nums, new_str), '')
+    except Exception as e:
+        PLog.log('text_remove_full_line error %s' % str(e), 'e', True)
+
+
 def text_replace_full_line(t_file, line_num=[], new_str=str):
     # type: (str, list, str) -> None
     if not os.path.exists(t_file):
@@ -251,6 +272,9 @@ def update_module_build_gradle(module_root_path):
         text_replace(module_gradle_path, r'androidTestCompile', r'androidTestImplementation')
         text_replace(module_gradle_path, r'compile ', r'implementation ')
         text_replace(module_gradle_path, r'apt ', r'annotationProcessor ')
+        apt_line_find = text_line_find(module_gradle_path, r"apply plugin: 'android-apt'")
+        if len(apt_line_find) > 0:
+            text_remove_full_line(module_gradle_path, apt_line_find)
         product_flavors = text_line_find(module_gradle_path, r'productFlavors {')
         if len(product_flavors) > 0:
             flavor_dimensions = text_line_find(module_gradle_path, r'flavorDimensions "versionCode"')
