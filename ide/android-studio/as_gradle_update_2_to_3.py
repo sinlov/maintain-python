@@ -275,6 +275,9 @@ def update_module_build_gradle(module_root_path):
         apt_line_find = text_line_find(module_gradle_path, r"apply plugin: 'android-apt'")
         if len(apt_line_find) > 0:
             text_remove_full_line(module_gradle_path, apt_line_find)
+        plugins_apt_line_find = text_line_find(module_gradle_path, r"com.neenbedankt.gradle.plugins:android-apt")
+        if len(plugins_apt_line_find) > 0:
+            text_remove_full_line(module_gradle_path, plugins_apt_line_find)
         product_flavors = text_line_find(module_gradle_path, r'productFlavors {')
         if len(product_flavors) > 0:
             flavor_dimensions = text_line_find(module_gradle_path, r'flavorDimensions "versionCode"')
