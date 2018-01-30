@@ -7,10 +7,13 @@ import platform
 import optparse
 
 import re
+import shutil
+import time
 
 __author__ = 'sinlov'
 
 is_verbose = False
+is_force = False
 level_set = 1
 folder_path = os.getcwd()
 
@@ -230,6 +233,31 @@ class GradleCode:
     FLAVOR_DIMENSIONS_CODE = 'flavorDimensions "versionCode"\n'.rjust(39, ' ')
 
 
+def clean_old_build_catch(work_path=str):
+    # type: (str) -> None
+    if not os.path.exists(work_path):
+        PLog.log('clean_old_build_catch not found %s' % work_path, 'e', True)
+        exit(1)
+    for root, dirs, files in os.walk(work_path):
+        for name in dirs:
+            if name.endswith("build"):
+                find_folder = 'Find build/ at {}/{}/'.format(root, name)
+                PLog.log(find_folder, 'd')
+                shutil.rmtree(os.path.join(str(root), str(name)), is_force)
+                time.sleep(1)
+            if name.endswith(".gradle"):
+                find_folder = "Find .gradle %s -> %s" % (str(root), str(name))
+                PLog.log(find_folder, 'd')
+                shutil.rmtree(os.path.join(str(root), str(name)), is_force)
+                time.sleep(1)
+            if name.endswith("freeline"):
+                find_folder = "Find freeline %s -> %s" % (str(root), str(name))
+                PLog.log(find_folder, 'd')
+                shutil.rmtree(os.path.join(str(root), str(name)), is_force)
+                time.sleep(1)
+    PLog.log('clean old catch at: %s' % work_path.rjust(GradleCode.LINE_LOG), "i", True)
+
+
 def find_out_settings_gradle_module_name(update_path):
     dev_modules = []
     settings_gradle_path = os.path.join(update_path, GradleCode.REG_SETTING_GRADLE_BASE_NAME)
@@ -347,8 +375,10 @@ def update_as_project_2_to_3(update_path):
     update_gradle_wrapper(update_path)
     update_root_build_gradle(update_path)
     update_each_module(update_path)
+    clean_old_build_catch(update_path)
     update_msg = ('Update end [ %s ]' % update_path).ljust(GradleCode.LINE_LOG, ' ')
-    PLog.log(update_msg, "i", True)
+    PLog.log(update_msg, 'i', True)
+    PLog.log('Warning you must [ Rebuild Project ] and fix other problem for update', 'w', True)
 
 
 if __name__ == '__main__':
