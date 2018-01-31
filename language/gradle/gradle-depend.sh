@@ -111,7 +111,7 @@ else
                 depend_conf_mode="compile"
             ;;
             r)
-                depend_conf_mode="runtime"
+                depend_conf_mode="releaseCompileClasspath"
             ;;
             f)
                 other_module="dependencies"
