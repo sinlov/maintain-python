@@ -1,0 +1,69 @@
+{
+  "build_path": "build",
+  "mode": "debug",
+  "build_projects": [
+    {
+      "name": "Android-Temp",
+      "git_url": "git@github.com:MDL-Sinlov/MDL_Android-Temp.git",
+      "local": "Android-Temp",
+      "branch": "master",
+      "tag": "",
+      "version_check": {
+        "version_file": "gradle.properties",
+        "version_code": "1000001",
+        "version_name": "1.0.1-SNAPSHOT"
+      },
+      "tag_file_tasks": [
+        {
+          "name": "VERSION_CODE",
+          "file": "gradle.properties",
+          "from": "1",
+          "to": "1000000"
+        },
+        {
+          "name": "VERSION_NAME",
+          "file": "gradle.properties",
+          "from": "0.0.1",
+          "to": "1.0.0"
+        }
+      ],
+      "tag_git": {
+        "new": {
+          "tag_name": "v1.1.0",
+          "tag_message": "add new code",
+          "merge_origin_branch": "develop",
+          "to_next_version_tasks": [
+            {
+              "name": "VERSION_CODE",
+              "file": "gradle.properties",
+              "from": "1001000",
+              "to": "1001001"
+            },
+            {
+              "name": "VERSION_NAME",
+              "file": "gradle.properties",
+              "from": "1.1.0",
+              "to": "1.1.1-SNAPSHOT"
+            }
+          ],
+          "push_origin": 0
+        },
+        "remove_local_tags": [
+          {
+            "tag_name": ""
+          }
+        ],
+        "remove_origin_tags": [
+          {
+            "tag_name": ""
+          }
+        ]
+      },
+      "auto_clean": 1,
+      "args": [
+        {
+        }
+      ]
+    }
+  ]
+}

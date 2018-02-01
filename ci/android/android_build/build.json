@@ -1,0 +1,52 @@
+{
+  "build_path": "build",
+  "build_projects": [
+    {
+      "name": "Android-Temp",
+      "git_url": "git@github.com:MDL-Sinlov/MDL_Android-Temp.git",
+      "local": "Android-Temp",
+      "branch": "master",
+      "tag": "0.0.1",
+      "version_name": "0.0.1",
+      "version_code": "1",
+      "tasks": [
+        {
+          "module": "projectRoot",
+          "task": "clean",
+          "need_refresh_depend": 1
+        },
+        {
+          "module": "ux",
+          "task": "generateReleaseSources"
+        },
+        {
+          "module": "app",
+          "task": "assembleRelease"
+        }
+      ],
+      "mode": "debug",
+      "auto_clean": 1,
+      "args": [
+        {
+          "replace_gradle_properties": [
+            {
+              "name": "VERSION_NAME",
+              "from": "0.0.1",
+              "to": "1.0.0"
+            },
+            {
+              "name": "VERSION_CODE",
+              "from": "1",
+              "to": "1000000"
+            },
+            {
+              "name": "NEXUS_RELEASE",
+              "from": "file:///Users/sinlov/Documents/GitHub/MDL_Sinlov/MDL-Android-Repo/mvn-repo/",
+              "to": "file:///Users/sinlov/Downloads/mvn-repo/release"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
