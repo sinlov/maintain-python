@@ -513,9 +513,8 @@ def parser_version_config_json(parser_json_path=str):
                         'mode': parser_mode,
                         'build_projects': build_project_list
                     }
-                    json_str = json.dumps(out_js)
+                    json_str = json.dumps(out_js, sort_keys=True, indent=2, separators=(',', ': '))
                     out_p_f = open(parser_out_path, 'w')
-
                     out_p_f.write(json_str)
                     out_p_f.close()
         except Exception, e:
