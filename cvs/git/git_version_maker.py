@@ -423,6 +423,8 @@ def check_version_file_when_has_version_check(local_p, project):
 
 
 def push_origin_if_has_set(local_p, project):
+    if mode_test:
+        return
     if 'push_origin' in project.keys():
         push_origin = project['push_origin']
         if push_origin == 1:
