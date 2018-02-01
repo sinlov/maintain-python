@@ -683,7 +683,7 @@ def parser_tag_config_json(parser_json_path=str):
     :param parser_json_path:
     :return:
     """
-    # type: (str) -> None
+    # type: str -> None
     global is_verbose
     parser_json_path = os.path.join(root_run_path, parser_json_path)
     if not os.path.exists(parser_json_path):

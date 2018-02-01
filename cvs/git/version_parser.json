@@ -1,0 +1,51 @@
+{
+  "parser_out_path": "./make_version.json",
+  "parser_build_path": "build",
+  "parser_mode": "debug",
+  "same_parser_params": {
+    "branch": "master",
+    "tag": "",
+    "version_check": {
+      "version_file": "gradle.properties",
+      "version_code": "1000001",
+      "version_name": "1.0.1-SNAPSHOT"
+    },
+    "version_file_tasks": [
+      {
+        "name": "VERSION_CODE",
+        "file": "gradle.properties",
+        "from": "1",
+        "to": "1000000"
+      },
+      {
+        "name": "VERSION_NAME",
+        "file": "gradle.properties",
+        "from": "0.0.1",
+        "to": "1.0.0"
+      }
+    ],
+    "version_message": "new version",
+    "push_origin": 1,
+    "auto_clean": 1,
+    "args": [
+      {
+      }
+    ]
+  },
+  "parser_projects": [
+    {
+      "name": "Android-Temp",
+      "git_url": "git@github.com:MDL-Sinlov/MDL_Android-Temp.git",
+      "local": "Android-Temp",
+      "branch": "master",
+      "tag": ""
+    },
+    {
+      "name": "Android-Temp-Next",
+      "git_url": "git@github.com:MDL-Sinlov/MDL_Android-Temp.git",
+      "local": "Android-Temp-Next",
+      "branch": "master",
+      "tag": ""
+    }
+  ]
+}
