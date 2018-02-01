@@ -299,6 +299,8 @@ def update_module_build_gradle(module_root_path):
         text_replace(module_gradle_path, r'testCompile', r'testImplementation')
         text_replace(module_gradle_path, r'androidTestCompile', r'androidTestImplementation')
         text_replace(module_gradle_path, r'compile ', r'implementation ')
+        text_replace(module_gradle_path, r'provided ', r'compileOnly ')
+        # text_replace(module_gradle_path, r'runtimeOnly ', r'apk ')
         text_replace(module_gradle_path, r'apt ', r'annotationProcessor ')
         apt_line_find = text_line_find(module_gradle_path, r"apply plugin: 'android-apt'")
         if len(apt_line_find) > 0:
@@ -346,7 +348,7 @@ def update_root_build_gradle(update_path):
             if len(repositories_google_lines) == 0:
                 insert_google_line = []
                 for repositories_line in repositories_lines:
-                    repositories_line = repositories_line + 1
+                    repositories_line = repositories_line + 2
                     insert_google_line.append(repositories_line)
                 text_insert_line(build_gradle_root_path, insert_google_line, GradleCode.REPOSITORIES_GOOGLE)
 
