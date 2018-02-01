@@ -51,6 +51,9 @@ mode_test = False
 
 
 class Logger_Print:
+    def __init__(self):
+        pass
+
     ERROR = '\033[91m'
     OK_GREEN = '\033[96m'
     WARNING = '\033[93m'
@@ -733,18 +736,22 @@ def parser_clean_and_try_clean(c_clean=str):
     check_clean_path = os.path.join(root_run_path, c_clean)
     if os.path.exists(check_clean_path):
         config_file_path = check_clean_path
-    if os.path.exists(config_file_path):
-        js = read_json_file(config_file_path)
-        build_path = js['build_path']
-        build_path = os.path.join(root_run_path, build_path)
-        change_files_write(build_path)
-        time.sleep(1)
-        shutil.rmtree(build_path, True)
-        time.sleep(1)
-        log_printer('Clean success : %s' % build_path, 'i', True)
-    else:
-        log_printer('can not find path %s\nExit 1!' % config_file_path, 'e', True)
-        exit(1)
+    try:
+        if os.path.exists(config_file_path):
+            js = read_json_file(config_file_path)
+            build_path = js['build_path']
+            build_path = os.path.join(root_run_path, build_path)
+            change_files_write(build_path)
+            time.sleep(1)
+            shutil.rmtree(build_path, True)
+            time.sleep(1)
+            log_printer('Clean success : %s' % build_path, 'i', True)
+        else:
+            log_printer('can not find path %s\nExit 1!' % config_file_path, 'e', True)
+            exit(1)
+    except Exception as e:
+        log_printer('parser_clean_and_try_clean error at path [ %s ]\n%s\nExit 1!' % (config_file_path, str(e)), 'e',
+                    True)
 
 
 if __name__ == '__main__':

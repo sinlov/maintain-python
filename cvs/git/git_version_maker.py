@@ -48,6 +48,44 @@ is_force = False
 mode_test = False
 
 
+class Logger_Print:
+    def __init__(self):
+        pass
+
+    ERROR = '\033[91m'
+    OK_GREEN = '\033[96m'
+    WARNING = '\033[93m'
+    OK_BLUE = '\033[94m'
+    HEADER = '\033[95m'
+    WRITE = '\033[98m'
+    BLACK = '\033[97m'
+    END_LI = '\033[0m'
+
+    @staticmethod
+    def log_normal(info):
+        print Logger_Print.WRITE + info + Logger_Print.END_LI
+
+    @staticmethod
+    def log_assert(info):
+        print Logger_Print.BLACK + info + Logger_Print.END_LI
+
+    @staticmethod
+    def log_info(info):
+        print Logger_Print.OK_GREEN + info + Logger_Print.END_LI
+
+    @staticmethod
+    def log_debug(info):
+        print Logger_Print.OK_BLUE + info + Logger_Print.END_LI
+
+    @staticmethod
+    def log_warning(info):
+        print Logger_Print.WARNING + info + Logger_Print.END_LI
+
+    @staticmethod
+    def log_error(info):
+        print Logger_Print.ERROR + info + Logger_Print.END_LI
+
+
 def init_logger(first_tag, sec_tag=str):
     global logger
     log_file = first_tag + sec_tag + '.log'
@@ -71,7 +109,21 @@ def init_logger_by_time(tag=str):
 def log_printer(msg, lev=str, must=False):
     # type: (str, str, bool) -> None
     if is_verbose or must:
-        print msg,
+        if not is_platform_windows():
+            if lev == 'i':
+                Logger_Print.log_info('%s' % msg)
+            elif lev == 'd':
+                Logger_Print.log_debug('%s' % msg)
+            elif lev == 'w':
+                Logger_Print.log_warning('%s' % msg)
+            elif lev == 'e':
+                Logger_Print.log_error('%s' % msg)
+            elif lev == 'a':
+                Logger_Print.log_assert('%s' % msg)
+            else:
+                print '%s\n' % msg
+        else:
+            print '%s\n' % msg
     if lev == 'i':
         logger.info(msg)
     elif lev == 'd':
@@ -80,6 +132,8 @@ def log_printer(msg, lev=str, must=False):
         logger.warning(msg)
     elif lev == 'e':
         logger.error(msg)
+    elif lev == 'a':
+        logger.debug(msg)
     else:
         logger.info(msg)
 
@@ -530,17 +584,22 @@ def parser_clean_and_try_clean(c_clean=str):
     check_clean_path = os.path.join(root_run_path, c_clean)
     if os.path.exists(check_clean_path):
         config_file_path = check_clean_path
-    if os.path.exists(config_file_path):
-        js = read_json_file(config_file_path)
-        build_path = js['build_path']
-        build_path = os.path.join(root_run_path, build_path)
-        change_files_write(build_path)
-        time.sleep(1)
-        shutil.rmtree(build_path, True)
-        time.sleep(1)
-        log_printer('Clean success : %s' % build_path, 'i', True)
-    else:
-        log_printer('can not find path %s\nExit 1!' % config_file_path, 'e', True)
+    try:
+        if os.path.exists(config_file_path):
+            js = read_json_file(config_file_path)
+            build_path = js['build_path']
+            build_path = os.path.join(root_run_path, build_path)
+            change_files_write(build_path)
+            time.sleep(1)
+            shutil.rmtree(build_path, True)
+            time.sleep(1)
+            log_printer('Clean success : %s' % build_path, 'i', True)
+        else:
+            log_printer('can not find path %s\nExit 1!' % config_file_path, 'e', True)
+            exit(1)
+    except Exception as e:
+        log_printer('parser_clean_and_try_clean error at path [ %s ]\n%s\nExit 1!' % (config_file_path, str(e)), 'e',
+                    True)
         exit(1)
 
 
