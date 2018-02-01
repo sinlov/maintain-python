@@ -187,6 +187,23 @@ def text_line_find(t_file=str, t_string=str):
             pass
 
 
+def text_line_find_reg(t_file=str, reg=str):
+    # type: (str, str, str) -> list
+    res = []
+    if not os.path.exists(t_file):
+        return res
+    else:
+        try:
+            f_lines = open(t_file, 'r').readlines()
+            for line_num in range(len(f_lines)):
+                if re.match(reg, f_lines[line_num]):
+                    res.append(line_num)
+            return res
+        except Exception as e:
+            PLog.log('text_line_find error %s' % str(e), 'e', True)
+            pass
+
+
 def text_insert_line(t_file=str, line_no_s=[], insert_string=str):
     # type: (str, list, str) -> None
     """
@@ -230,6 +247,8 @@ class GradleCode:
     REPOSITORIES_GOOGLE = "google()\n".rjust(17, ' ')
     REG_SETTING_GRADLE_START = r'^(\s*)(include).*$'
     REG_SETTING_GRADLE_BASE_NAME = r'settings.gradle'
+    REG_MODULE_APPLICATION = r"^(\s*)(apply plugin: 'com.android.application').*$"
+    REG_MODULE_LIBRARY = r"^(\s*)(apply plugin: 'com.android.library').*$"
     FLAVOR_DIMENSIONS_CODE = 'flavorDimensions "versionCode"\n'.rjust(39, ' ')
 
 
@@ -298,7 +317,11 @@ def update_module_build_gradle(module_root_path):
             text_replace(module_gradle_path, r'buildToolsVersion', r'//    buildToolsVersion')
         text_replace(module_gradle_path, r'testCompile', r'testImplementation')
         text_replace(module_gradle_path, r'androidTestCompile', r'androidTestImplementation')
-        text_replace(module_gradle_path, r'compile ', r'implementation ')
+        if len(text_line_find_reg(module_gradle_path, GradleCode.REG_MODULE_APPLICATION)) > 0:
+            text_replace(module_gradle_path, r'compile ', r'implementation ')
+        else:
+            text_replace(module_gradle_path, r'compile ', r'api ')
+            text_replace(module_gradle_path, r'implementation ', r'api ')
         text_replace(module_gradle_path, r'provided ', r'compileOnly ')
         # text_replace(module_gradle_path, r'runtimeOnly ', r'apk ')
         text_replace(module_gradle_path, r'apt ', r'annotationProcessor ')
