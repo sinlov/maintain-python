@@ -478,6 +478,7 @@ def check_version_file_when_has_version_check(local_p, project):
 
 def push_origin_if_has_set(local_p, project):
     if mode_test:
+        log_printer('Mode test not push_origin_if_has_set', '', True)
         return
     if 'push_origin' in project.keys():
         push_origin = project['push_origin']
@@ -523,7 +524,10 @@ def filter_project_config(project, build_path=str):
     run_version_file_tasks_if_has_set(local_p, project)
     push_origin_if_has_set(local_p, project)
     if auto_clean_p != 0:
-        auto_clean_build_project(local_p)
+        if mode_test:
+            log_printer('Mode test not auto_clean_p', '', True)
+        else:
+            auto_clean_build_project(local_p)
     log_printer('\n=== end project %s ===\n' % name_p, 'i', True)
 
 
