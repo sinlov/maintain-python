@@ -25,6 +25,13 @@
         "to": "1.0.0"
       }
     ],
+    "cli_tasks": [
+      {
+        "name": "cli",
+        "cli": "git status",
+        "need": 1
+      }
+    ],
     "version_message": "new version",
     "push_origin": 1,
     "auto_clean": 1,

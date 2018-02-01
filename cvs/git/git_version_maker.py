@@ -489,6 +489,32 @@ def push_origin_if_has_set(local_p, project):
                 exit(1)
 
 
+def run_cli_task_if_has(local_p, project):
+    if 'cli_tasks' in project.keys():
+        cli_tasks = project['cli_tasks']
+        if len(cli_tasks) < 1:
+            log_printer('run_cli_task_if_has size less than 1 pass', 'w', True)
+        else:
+            for cli_task in cli_tasks:
+                c_name = check_json_by_key(cli_task, 'name')
+                c_cli = check_json_by_key(cli_task, 'cli')
+                c_need = check_json_by_key(cli_task, 'need')
+                log_printer('run cli file task\n->name %s\n-> cli %s\n-> from %s'
+                            % (c_name, c_cli, c_need), 'i', True)
+                update_res = exec_cli(c_cli, local_p, out_of_time_default)
+                if not update_res:
+                    if c_need == '1':
+                        log_printer('run cli Name -> %s\nError\n-> %s\n %s'
+                                    % (c_name, c_cli, update_res), 'e', True)
+                        exit(1)
+                    else:
+                        log_printer('run cli Name -> %s\nError\n-> %s\n %s'
+                                    % (c_name, c_cli, update_res), 'w', True)
+                else:
+                    log_printer('run cli Name -> %s\nSuccess -> %s\n'
+                                % (c_name, c_cli), 'i', True)
+
+
 def run_version_file_tasks_if_has_set(local_p, project):
     if 'version_file_tasks' in project.keys():
         version_file_tasks = project['version_file_tasks']
@@ -521,6 +547,7 @@ def filter_project_config(project, build_path=str):
     auto_clean_p = check_json_by_key(project, 'auto_clean')
     clone_by_tag_or_not_has_tag(branch_p, git_url_p, local_p, project)
     check_version_file_when_has_version_check(local_p, project)
+    run_cli_task_if_has(local_p, project)
     run_version_file_tasks_if_has_set(local_p, project)
     push_origin_if_has_set(local_p, project)
     if auto_clean_p != 0:
