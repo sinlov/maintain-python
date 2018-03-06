@@ -487,6 +487,7 @@ def push_origin_if_has_set(local_p, project):
             push_res = exec_cli(cmd_git_push, local_p, out_of_time_default)
             if not push_res:
                 exit(1)
+        time.sleep(1)
 
 
 def run_cli_task_if_has(local_p, project):
@@ -513,6 +514,7 @@ def run_cli_task_if_has(local_p, project):
                 else:
                     log_printer('run cli Name -> %s\nSuccess -> %s\n'
                                 % (c_name, c_cli), 'i', True)
+            time.sleep(1)
 
 
 def run_version_file_tasks_if_has_set(local_p, project):
@@ -535,6 +537,7 @@ def run_version_file_tasks_if_has_set(local_p, project):
                 version_message = project['version_message']
             version_message = '%s to new %s' % (version_message, t_to)
             git_add_and_commit_by_message(local_p, version_message)
+        time.sleep(1)
 
 
 def filter_project_config(project, build_path=str):
@@ -547,8 +550,8 @@ def filter_project_config(project, build_path=str):
     auto_clean_p = check_json_by_key(project, 'auto_clean')
     clone_by_tag_or_not_has_tag(branch_p, git_url_p, local_p, project)
     check_version_file_when_has_version_check(local_p, project)
-    run_cli_task_if_has(local_p, project)
     run_version_file_tasks_if_has_set(local_p, project)
+    run_cli_task_if_has(local_p, project)
     push_origin_if_has_set(local_p, project)
     if auto_clean_p != 0:
         if mode_test:
