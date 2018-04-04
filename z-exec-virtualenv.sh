@@ -44,6 +44,8 @@ virtualenv --system-site-packages ${prod_virtualenv_name}
 source ${prod_virtualenv_name}/bin/activate
 
 if [ $# -eq 0 ]; then
+    echo -e "\033[;36m=> If want install module like ${want_install_modules}\nplease input any args\033[0m"
+else
     if [ -n "${want_install_modules}" ]; then
         for module in ${want_install_modules[@]};
         do
@@ -51,9 +53,6 @@ if [ $# -eq 0 ]; then
             pip install module
         done
     fi
-    echo -e "\033[;36m=> If not want install module, please input any args\033[0m"
-else
-    echo -e "\033[;32m=> Not install any module!\033[0m"
 fi
 
 echo -e "\033[;32m=> Exec virtualenv [ ${prod_virtualenv_name} ] success\033[0m"
