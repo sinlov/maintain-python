@@ -1,5 +1,7 @@
 ## custom
 
+*.log
+
 maintain-python/
 
 *.pyc
