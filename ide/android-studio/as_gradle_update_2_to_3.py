@@ -28,15 +28,14 @@ Your input error
     or input [-h] to see help
 """
 
-runtime_version_error = """
-This script must run python 2.6.+
-"""
-
 
 class PLog:
-
     def __init__(self):
         pass
+
+    RUNTIME_VERSION_ERROR = """
+    This script must run python 2.6.+
+    """
 
     ERROR = '\033[91m'
     OK_GREEN = '\033[96m'
@@ -52,10 +51,10 @@ class PLog:
         PLog.log('Python version %s' % platform.python_version(), 'd')
         version_split = platform.python_version().split('.')
         if version_split[0] != '2':
-            PLog.log(runtime_version_error, 'e', True)
+            PLog.log(PLog.RUNTIME_VERSION_ERROR, 'e', True)
             exit(1)
         if version_split[1] < '6':
-            PLog.log(runtime_version_error, 'e', True)
+            PLog.log(PLog.RUNTIME_VERSION_ERROR, 'e', True)
             exit(1)
 
     @staticmethod
