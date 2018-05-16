@@ -8,13 +8,11 @@ import datetime
 import subprocess
 import optparse
 import shlex
-
-import sched
+from threading import Timer
 
 __author__ = 'sinlov'
 
 is_verbose = False
-schedule = sched.scheduler(time.time, time.sleep)
 
 """
 default max time 1 hour 
@@ -31,6 +29,8 @@ out_of_time_default = 60 * 1
 class PLog:
     def __init__(self):
         pass
+
+    is_open_log_head = False
 
     RUNTIME_VERSION_ERROR = """
         This script must run python 2.6.+
@@ -58,7 +58,8 @@ class PLog:
 
     @staticmethod
     def log_normal(info):
-        print PLog.WRITE + info + PLog.END_LI
+        print ''.join([PLog.WRITE, info, PLog.END_LI])
+        # print PLog.WRITE + info + PLog.END_LI
 
     @staticmethod
     def log_assert(info):
@@ -81,24 +82,42 @@ class PLog:
         print PLog.ERROR + info + PLog.END_LI
 
     @staticmethod
+    def open_log_head(is_open=False):
+        PLog.is_open_log_head = is_open
+
+    @staticmethod
     def log(msg, lev=str, must=False):
         # type: (str, str, bool) -> None
+        log_head = ''
+        if PLog.is_open_log_head:
+            log_head = time.strftime("%Y/%m/%d/ %H:%M:%S ", time.localtime(time.time()))
         if is_verbose or must:
             if not platform.system() == "Windows":
                 if lev == 'i':
-                    PLog.log_info('%s' % msg)
+                    PLog.log_info('{0}[{1}] {2}'.format(log_head, 'I', msg))
                 elif lev == 'd':
-                    PLog.log_debug('%s' % msg)
+                    PLog.log_debug('{0}[{1}] {2}'.format(log_head, 'D', msg))
                 elif lev == 'w':
-                    PLog.log_warning('%s' % msg)
+                    PLog.log_warning('{0}[{1}] {2}'.format(log_head, 'W', msg))
                 elif lev == 'e':
-                    PLog.log_error('%s' % msg)
+                    PLog.log_error('{0}[{1}] {2}'.format(log_head, 'E', msg))
                 elif lev == 'a':
-                    PLog.log_assert('%s' % msg)
+                    PLog.log_assert('{0}[{1}] {2}'.format(log_head, 'A', msg))
                 else:
-                    PLog.log_normal('%s' % msg)
+                    PLog.log_normal('{0}[{1}] {2}'.format(log_head, '', msg))
             else:
-                print ('%s\n' % msg)
+                if lev == 'i':
+                    print ('{0}[{1}] {2}\n'.format(log_head, 'I', msg))
+                elif lev == 'd':
+                    print ('{0}[{1}] {2}\n'.format(log_head, 'D', msg))
+                elif lev == 'w':
+                    print ('{0}[{1}] {2}\n'.format(log_head, 'W', msg))
+                elif lev == 'e':
+                    print ('{0}[{1}] {2}\n'.format(log_head, 'E', msg))
+                elif lev == 'a':
+                    print ('{0}[{1}] {2}\n'.format(log_head, 'A', msg))
+                else:
+                    print ('{0}[{1}] {2}\n'.format(log_head, '', msg))
 
 
 def is_platform_windows():
@@ -217,10 +236,6 @@ def exec_cli(cmd_string, cwd=None, time_out=None, is_shell=False):
         return False
 
 
-def func(string1, float1):
-    print "now is", time.time(), " | output=", string1, float1
-
-
 def git_pull():
     PLog.log("=> git pull time {0}".format(find_now_time_format("%Y-%m-%d-%H_%M_%S")), 'i')
     cmd_line = 'git pull'
@@ -238,8 +253,7 @@ def job_auto_git_pull(each_time):
     for each in range(max_time):
         if each > 0 and each % each_time == 0:
             PLog.log("schedule.enter time {0}".format(each), 'd')
-            schedule.enter(each, 0, git_pull, ())
-    schedule.run()
+            Timer(each, git_pull, ()).start()
 
 
 if __name__ == '__main__':
