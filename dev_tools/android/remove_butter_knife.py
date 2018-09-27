@@ -8,9 +8,9 @@ import os
 import sys
 import re
 
-field_pattern = r"@BindView\((.*?)\) (.*?) (.*?);"
-butter_pattern = r"\n(.*?)ButterKnife.bind\((.*?)\);"
-butter_regex = re.compile(butter_pattern)
+field_pattern = r'(.*?)@(BindView|InjectView|Bind)\((.*?)\)\n(.*?) (.*?);'
+butter_pattern = r'\n(.*?)ButterKnife.bind\((.*?)\);'
+butter_regex = re.compile(r'(.*?)ButterKnife.bind\((.*?)\);(.*?)')
 
 
 class Resources:
@@ -25,17 +25,30 @@ class Resources:
 
 def replace_content(match):
     # remove Access Modifiers for assignments inside methods
+    print('match.group(0) => {0}'.format(match.group(0).split(' ')))
+    print('match.group(1) => {0}'.format(match.group(1).split(' ')))
+    print('match.group(2) => {0}'.format(match.group(2).split(' ')))
+    print('match.group(3) => {0}'.format(match.group(3).split(' ')))
+    print('match.group(4) => {0}'.format(match.group(4).split(' ')))
+
+    fist_group = match.group(0).split(' ')
+    # if len(fist_group) > 9:
+    resource_type = fist_group[8]
+    resource_name = str(fist_group[9]).replace(';', '')
     splits = match.group(3).split(' ')
-    variable_name = splits[1] if len(splits) > 1 else splits[0]
+    resource_id = splits[1] if len(splits) > 1 else splits[0]
+    print('resource_id => {0}'.format(resource_id))
+
     # check if we need type casting
     # if resources.support26 is true, we only empty string that means no type casting
     # if the type is View, we don't need type casting, obviously
-    should_type_cast = Resources.suffix or Resources.support26 or match.group(2) == 'View'
-    suffix = Resources.suffix if should_type_cast else "({0}) {1}".format(match.group(2), Resources.suffix)
+    should_type_cast = Resources.suffix or Resources.support26 or resource_type == 'View'
+    suffix = Resources.suffix if should_type_cast else "({0}) {1}".format(resource_type, Resources.suffix)
+    print('suffix => {0}'.format(suffix))
     # save text to replace ButterKnife.Bind. This replacement text is variable assignments.
-    Resources.butter_replacement += "{0}{1} = {2}findViewById({3});\n".format(Resources.space, variable_name, suffix,
-                                                                              match.group(1))
-    return "{0} {1};".format(match.group(2), match.group(3))
+    Resources.butter_replacement += "{0}{1} = {2}findViewById({3});\n".format(Resources.space, resource_name, suffix,
+                                                                              resource_id)
+    return "{0}{1} {2};".format(Resources.space, resource_type, resource_name)
 
 
 def process_file(abs_path):
