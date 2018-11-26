@@ -20,7 +20,7 @@ __author__ = 'sinlov'
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-mysql_conf = {
+mysql_conf_default = {
     'host': '主机host',
     'port': 3306,
     'user': '用户名',
@@ -32,7 +32,7 @@ mysql_conf = {
 is_verbose = False
 root_run_path = os.getcwd()
 
-logger_tag = 'mysql_dump_xls_{0}_'.format(mysql_conf['database'])
+logger_tag = 'mysql_dump_xls_{0}_'.format(mysql_conf_default['database'])
 logger_time_format = '%Y_%m_%d_%H_%M_%S'
 
 """
@@ -411,8 +411,8 @@ class ExcelUtils:
     def __init__(self):
         pass
 
-    def mysql_to_excel(self, sheet_name, table_name, out_path, flag1=1, flag2=0):
-        # type: (str, str, str, object, object) -> None
+    def mysql_to_excel(self, mysql_conn, sheet_name, table_name, out_path, flag1=1, flag2=0):
+        # type: (dict, str, str, str, object, object) -> None
         """
             mysql数据导入excel
             sheet_name:excel excel名称
@@ -422,7 +422,10 @@ class ExcelUtils:
             flag1:数据表结果集查询标志
             flag2:数据表描述查询标志
         """
-        mysql_db = MySQLUtil(mysql_conf)
+        if mysql_conn is None:
+            mysql_db = MySQLUtil(mysql_conf_default)
+        else:
+            mysql_db = MySQLUtil(mysql_conn)
         if not mysql_db.is_connect():
             PLog.log('not connect mysql!', 'e', True)
             return
@@ -455,7 +458,7 @@ class ExcelUtils:
                      'table_name -> {2}'
                      'out_path -> {3}'
                      'Error -> {4}'.
-                     format(mysql_conf['database'],
+                     format(mysql_conf_default['database'],
                             sheet_name,
                             table_name,
                             out_path,
@@ -466,7 +469,7 @@ class ExcelUtils:
                      'sheet_name -> {1}'
                      'table_name -> {2}'
                      'out_path -> {3}'.
-                     format(mysql_conf['database'],
+                     format(mysql_conf_default['database'],
                             sheet_name,
                             table_name,
                             out_path,
@@ -519,4 +522,7 @@ if __name__ == '__main__':
                      'out_path', options.out_path,
                      ), 'i', True)
     mysql_excel = ExcelUtils()
-    mysql_excel.mysql_to_excel(options.sheet_name, options.table_name, options.out_path)
+    mysql_excel.mysql_to_excel(mysql_conn={},
+                               sheet_name=options.sheet_name,
+                               table_name=options.table_name,
+                               out_path=options.out_path)
