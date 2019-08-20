@@ -89,3 +89,9 @@ if [[ $? -ne 0 ]]; then
 else
     pI "-> has install clang"
 fi
+
+#git clone https://gn.googlesource.com/gn
+#cd gn
+#python build/gen.py
+#ninja -C out
+# add path gn/out to path
