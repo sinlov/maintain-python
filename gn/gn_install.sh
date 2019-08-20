@@ -48,6 +48,8 @@ checkEnv(){
 echo -e "This shell can install ninja and gn tools for build
     Must use cli git and https://github.com and https://gn.googlesource.coma
     If has error, please check your network.
+
+    this script can install at ubuntu
 "
 checkEnv git
 
@@ -73,5 +75,17 @@ if [[ $? -ne 0 ]]; then
     pI "=> now install ninja at ${info_ninja_install_path} link at /usr/local/bin/ninja"
     cd ${run_path}
 else
-    pI "has install ninja at ${check_ninja}"
+    pI "-> has install ninja at ${check_ninja}"
+fi
+
+check_clang=$(which clang)
+if [[ $? -ne 0 ]]; then
+    pI "-> try to install clang"
+    if [[ ${USER} == "root" ]]; then
+        apt-get install -y clang
+    else
+        sudo apt-get install -y clang
+    fi
+else
+    pI "-> has install clang"
 fi
