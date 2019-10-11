@@ -87,9 +87,14 @@ if [[ $? -ne 0 ]]; then
         sudo apt-get install -y clang
     fi
 else
-    pI "-> has install clang"
+    pI "-> has install clang at ${check_clang}"
 fi
 
+check_ninja=$(which ninja)
+if [[ $? -ne 0 ]];then
+    pI "-> try to install ninja"
+
+fi
 #git clone https://gn.googlesource.com/gn
 #cd gn
 #python build/gen.py
