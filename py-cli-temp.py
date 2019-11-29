@@ -100,7 +100,8 @@ This script must run python 2.6.+
         # type: (str, str, bool) -> None
         if not PLog._is_sys_windows():
             if lev == 'i':
-                PLog.log_info('%s' % msg)
+                if PLog._is_verbose or must:
+                    PLog.log_info('%s' % msg)
             elif lev == 'd':
                 if PLog._is_verbose or must:
                     PLog.log_debug('%s' % msg)
@@ -123,9 +124,9 @@ This script must run python 2.6.+
 
 class OptDefClass:
     hint_help_info = """
-    must use faker by pip install XXX
-    more information see
-    """
+must use faker by pip install XXX
+more information see script code.
+"""
 
     cwd_script_file_name = sys.argv[0][sys.argv[0].rfind(os.sep) + 1:]
     enter_error_info = """
@@ -136,12 +137,18 @@ class OptDefClass:
         ./{0} -h to see help
     """.format(cwd_script_file_name)
 
+    msg_open_force_mode = r'! warning open force mode'
+    msg_interrupt_generate = r'generate interrupt, if you want to continue use --force'
+
     def __init__(self):
         self.options = None
         self.args = None
         self_parser = optparse.OptionParser('\n\t%prog' + ' -h\n\t%prog -v -c\n' + OptDefClass.hint_help_info)
         self_parser.add_option('-v', dest='v_verbose', action="store_true",
                                help="see verbose",
+                               default=False)
+        self_parser.add_option('--force', dest='force', action="store_true",
+                               help="do job force, ignore warning",
                                default=False)
         self_parser.add_option('-f', '--targetFile', dest='f_targetFile', type="string",
                                help="target file default is README.md",
@@ -154,6 +161,9 @@ class OptDefClass:
 
     def opt(self):
         return self.options
+
+    def args(self):
+        return self.args
 
     def verification(self):
         if not self.options.f_targetFile or not self.options.c_clean:
@@ -173,5 +183,11 @@ if __name__ == '__main__':
     # --verbose
     if options.v_verbose:
         PLog.set_verbose(options.v_verbose)
+
+    # --force
+    if options.force:
+        PLog.log(OptDefClass.msg_open_force_mode, 'w')
+
+    # --clean
     if options.c_clean:
-        PLog.log('now clean flag {}'.format(options.c_clean), 'd')
+        PLog.log('now clean flag {0} force flag {1}'.format(options.c_clean, options.force), 'd')
