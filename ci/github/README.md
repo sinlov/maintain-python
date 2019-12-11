@@ -1,3 +1,5 @@
+[![TravisBuildStatus](https://api.travis-ci.org/bridgewwater/webpack-project-temple-base.svg?branch=master)](https://travis-ci.org/bridgewwater/webpack-project-temple-base)
+[![codecov](https://codecov.io/gh/bridgewwater/webpack-project-temple-base/branch/master/graph/badge.svg)](https://codecov.io/gh/bridgewwater/webpack-project-temple-base)
 # py-doc-head-ci-github
 
 python cli tools for generate github Top document temple for different language

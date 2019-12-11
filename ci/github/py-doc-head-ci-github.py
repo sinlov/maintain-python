@@ -24,6 +24,11 @@ class CiHead:
 """
     golang_doc_head_match = r'^\s*\[\!\[(TravisBuildStatus|GoDoc|GoWalkerDoc|GoReportCard|codecov)\].*$'
 
+    nodejs = r"""[![TravisBuildStatus](https://api.travis-ci.org/%s.svg?branch=master)](https://travis-ci.org/%s)
+[![codecov](https://codecov.io/gh/%s/branch/master/graph/badge.svg)](https://codecov.io/gh/%s)
+"""
+    nodejs_doc_head_match = r'^\s*\[\!\[(TravisBuildStatus|codecov)\].*$'
+
     def __init__(self):
         pass
 
@@ -151,6 +156,33 @@ def differ_file_list_by_option_to_gen(option):
         return [option.f_targetFile]
 
 
+def urllib_request_json_dict_get(github_repo_url):
+    # type: (str) -> dict
+    try:
+        req = urllib2.Request(github_repo_url)
+        res_data = urllib2.urlopen(req)
+        res = res_data.read()
+        json_disc = json.loads(res)
+        return json_disc
+    except Exception as urllib_request_json_get_err:
+        PLog.log(
+            'urllib_request_json_dict_get error {0}\nErr url: {1}'.format(urllib_request_json_get_err, github_repo_url),
+            'e')
+        return {}
+
+
+def check_file_list_and_project_github_info(github_project_full_name, is_force, target_file_list):
+    if len(target_file_list) < 1:
+        PLog.log('Err: target file not set', 'e', True)
+        return False
+    if not check_github_project_by_full_name(github_project_full_name):
+        PLog.log('-> warning github project full name [ {0} ] not found'.format(github_project_full_name), 'w')
+        if not is_force:
+            PLog.log(DocHeadGithubCi.msg_interrupt_generate, 'w')
+            return False
+    return True
+
+
 def check_github_project_by_full_name(github_full_name):
     github_repo_url = '{0}{1}/{2}'.format(GithubApi.base_url, GithubApi.repos, github_full_name)
     github_repo_languages_url = '{0}{1}'.format(github_repo_url, GithubApi.repos_languages)
@@ -193,46 +225,18 @@ def check_github_project_by_full_name(github_full_name):
         return False
 
 
-def urllib_request_json_dict_get(github_repo_url):
-    # type: (str) -> dict
-    try:
-        req = urllib2.Request(github_repo_url)
-        res_data = urllib2.urlopen(req)
-        res = res_data.read()
-        json_disc = json.loads(res)
-        return json_disc
-    except Exception as urllib_request_json_get_err:
-        PLog.log(
-            'urllib_request_json_dict_get error {0}\nErr url: {1}'.format(urllib_request_json_get_err, github_repo_url),
-            'e')
-        return {}
-
-
-def gen_doc_head_of_github_ci_golang_by_file(target_file_list, github_project_full_name, is_force):
-    if len(target_file_list) < 1:
-        PLog.log('Err: target file not set', 'e', True)
-        exit(1)
-    if not check_github_project_by_full_name(github_project_full_name):
-        PLog.log('-> warning github project full name [ {0} ] not found'.format(github_project_full_name), 'w')
-        if not is_force:
-            PLog.log(DocHeadGithubCiGolang.msg_interrupt_generate, 'w')
-            exit(1)
-    new_head_content = CiHead.golang % (
-        github_project_full_name, github_project_full_name,
-        github_project_full_name, github_project_full_name,
-        github_project_full_name, github_project_full_name,
-        github_project_full_name, github_project_full_name)
-    PLog.log("=> new content is: {0}".format(new_head_content), 'd')
+def replace_file_list_with_new_content(type_name, target_file_list, github_project_full_name, new_head,
+                                       match_content):
     try:
         for target_file in target_file_list:
             if not os.path.exists(target_file):
                 PLog.log('Err: want add target file not exist {}'.format(target_file), 'e', True)
                 exit(1)
-            new_line = [new_head_content]
+            new_line = [new_head]
             with open(target_file, 'r') as doc_file:
                 read_lines = doc_file.readlines()
                 for line in read_lines:
-                    if re.match(CiHead.golang_doc_head_match, line):
+                    if re.match(match_content, line):
                         continue
                     new_line.append(line)
             with open(target_file, 'w') as refresh_file:
@@ -242,10 +246,38 @@ def gen_doc_head_of_github_ci_golang_by_file(target_file_list, github_project_fu
                                                                        github_project_full_name),
                      'i', True)
     except Exception as err:
-        PLog.log('gen_doc_head_of_github_ci_golang_by_file error {}'.format(err), 'e')
+        PLog.log('gen_doc_head_of_github_ci {0} file error {1}'.format(type_name, err), 'e')
 
 
-class DocHeadGithubCiGolang:
+def gen_doc_head_of_github_ci_golang_by_file(target_file_list, github_project_full_name, is_force):
+    if not check_file_list_and_project_github_info(github_project_full_name, is_force, target_file_list):
+        exit(1)
+    new_head_content = CiHead.golang % (
+        github_project_full_name, github_project_full_name,
+        github_project_full_name, github_project_full_name,
+        github_project_full_name, github_project_full_name,
+        github_project_full_name, github_project_full_name)
+    PLog.log("=> new content is: {0}".format(new_head_content), 'd')
+    replace_file_list_with_new_content(type_name='golang',
+                                       target_file_list=target_file_list,
+                                       github_project_full_name=github_project_full_name,
+                                       new_head=new_head_content, match_content=CiHead.golang_doc_head_match)
+
+
+def gen_doc_head_of_github_ci_nodejs_by_file(target_file_list, github_project_full_name, is_force):
+    if not check_file_list_and_project_github_info(github_project_full_name, is_force, target_file_list):
+        exit(1)
+    new_head_content = CiHead.nodejs % (
+        github_project_full_name, github_project_full_name,
+        github_project_full_name, github_project_full_name)
+    PLog.log("=> new content is: {0}".format(new_head_content), 'd')
+    replace_file_list_with_new_content(type_name='nodejs',
+                                       target_file_list=target_file_list,
+                                       github_project_full_name=github_project_full_name,
+                                       new_head=new_head_content, match_content=CiHead.nodejs_doc_head_match)
+
+
+class DocHeadGithubCi:
     hint_help_info = """
 python cli tools for generate github Top document temple for different language
 more information see script code.
@@ -267,7 +299,7 @@ more information see script code.
         self.options = None
         self.args = None
         self_parser = optparse.OptionParser(
-            '\n\t%prog' + ' -h\n\t%prog -g sinlov/fastEncryptDecode\n' + DocHeadGithubCiGolang.hint_help_info)
+            '\n\t%prog' + ' -h\n\t%prog -g sinlov/fastEncryptDecode\n' + DocHeadGithubCi.hint_help_info)
         self_parser.add_option('-v', dest='v_verbose', action="store_true",
                                help="see verbose",
                                default=False)
@@ -286,6 +318,10 @@ more information see script code.
                                help="generate golang project use travis-ci doc and so on.",
                                default="",
                                metavar="sinlov/fastEncryptDecode")
+        self_parser.add_option('--nodejs', dest='nodejs', type="string",
+                               help="generate nodejs project use travis-ci doc and so on.",
+                               default="",
+                               metavar="bridgewwater/webpack-project-temple-base")
         self.options, self.args = self_parser.parse_args()
 
     def opt(self):
@@ -298,9 +334,9 @@ more information see script code.
 if __name__ == '__main__':
     PLog.check_runtime()
     if len(sys.argv) < 2:
-        PLog.log(DocHeadGithubCiGolang.enter_error_info, 'e', True)
+        PLog.log(DocHeadGithubCi.enter_error_info, 'e', True)
         exit(1)
-    opt = DocHeadGithubCiGolang()
+    opt = DocHeadGithubCi()
 
     options = opt.opt()
     # --verbose
@@ -309,7 +345,7 @@ if __name__ == '__main__':
 
     # --force
     if options.force:
-        PLog.log(DocHeadGithubCiGolang.msg_open_force_mode, 'w')
+        PLog.log(DocHeadGithubCi.msg_open_force_mode, 'w')
 
     # --targetFile or --listFile
     target_files = differ_file_list_by_option_to_gen(options)
@@ -318,4 +354,7 @@ if __name__ == '__main__':
     if options.g_golang:
         gen_doc_head_of_github_ci_golang_by_file(target_files, options.g_golang,
                                                  options.force)
-    pass
+    # --nodejs
+    if options.nodejs:
+        gen_doc_head_of_github_ci_nodejs_by_file(target_files, options.nodejs,
+                                                 options.force)
