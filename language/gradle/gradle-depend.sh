@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+depend_conf_mode="implementation"
+
 run_path=$(pwd)
 shell_run_name=$(basename $0)
 shell_run_path=$(cd `dirname $0`; pwd)
@@ -77,14 +79,6 @@ runGradleDependenciesTask(){
     ${run_path}/gradlew -q "$1dependencies" --configuration "$2"
 }
 
-# checkBinary
-checkBinary java
-checkBinary android
-checkBinary gradle
-checkRunPathGradlew
-
-depend_conf_mode="implementation"
-
 function Usage(){
 cat << HELP
 Usage: ${shell_run_name} [moduleName]
@@ -109,6 +103,12 @@ if [[ "$ARG" =~ "-h" ]];then
     Usage
     exit 0
 fi
+
+# checkBinary
+checkBinary java
+checkBinary android
+checkBinary gradle
+checkRunPathGradlew
 
 if [ $# == 0 ]; then
     echo "unknown params, please see help -h"
